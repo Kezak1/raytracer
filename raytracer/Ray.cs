@@ -1,6 +1,5 @@
 namespace raytracer;
 
-using Point3 = Vec3;
 public struct Ray
 {   
     public Point3 Origin { get; }

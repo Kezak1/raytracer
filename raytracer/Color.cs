@@ -1,7 +1,5 @@
 namespace raytracer;
 
-using Color = Vec3;
-
 public static class ColorExtension {
     public static void WriteColor(Color c)
     {

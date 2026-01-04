@@ -1,14 +1,11 @@
-﻿namespace raytracer;
+﻿global using Point3 = raytracer.Vec3;
+global using Color = raytracer.Vec3;
 
-using Color = Vec3;
-using Point3 = Vec3;
+namespace raytracer;
 
 class Program
 {
-    static Color RayColor(Ray r)
-    {
-        return new Color(0.1, 0.2, 0.3);
-    }
+
     static void CreateImage()
     {
         int imageWidth = 256;
@@ -27,6 +24,37 @@ class Program
             }
         }
         Console.WriteLine("Done!");
+    }
+
+    static double HitSphere(Point3 center, double radius, Ray r)
+    {
+        Vec3 oc = center - r.Origin;
+        var a = r.Direction.LenghtSquared();
+        var h = Vec3.Dot(r.Direction, oc);
+        var c = oc.LenghtSquared() - radius*radius;
+        var delta = h*h - a*c;
+        if(delta < 0)
+        {
+            return -1.0;
+        } 
+        else
+        {
+            return (h - Math.Sqrt(delta)) / a;    
+        }
+    }
+
+    static Color RayColor(Ray r)
+    {
+        var t = HitSphere(new Point3(0, 0, -1), 0.5, r);
+        if(t > 0.0)
+        {
+            Vec3 n = Vec3.UnitVector(r.At(t) - new Vec3(0, 0, -1));
+            return 0.5 * (n + new Color(1, 1, 1));
+        }
+        
+        Vec3 unitDirection = Vec3.UnitVector(r.Direction);
+        var a = 0.5*(unitDirection.Y + 1.0);
+        return (1.0-a) * new Color(1.0, 1.0, 1.0) + a * new Color(0.5, 0.7, 1.0);
     }
 
     static void CreateScene()
