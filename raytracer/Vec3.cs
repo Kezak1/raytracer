@@ -26,6 +26,12 @@ public struct Vec3
     {
         return Math.Sqrt(LenghtSquared());
     }
+
+    public readonly bool NearZero()
+    {
+        var s = 1e-8;
+        return (double.Abs(X) < s) && (double.Abs(Y) < s) && (double.Abs(Z) < s);
+    } 
     
     public static Vec3 Random()
     {
@@ -113,7 +119,12 @@ public struct Vec3
         }
     }
 
-    public override string ToString()
+    public static Vec3 Reflect(Vec3 v, Vec3 n)
+    {
+        return v - 2 * Dot(v, n) * n;
+    }
+
+    public readonly override string ToString()
     {
         return $"{X} {Y} {Z}";
     }

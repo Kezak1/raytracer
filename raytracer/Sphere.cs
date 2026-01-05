@@ -4,11 +4,13 @@ public class Sphere : Hittable
 {
     private Point3 Center;
     private double Radius;
+    private Material Mat;
 
-    public Sphere(Point3 center, double radius)
+    public Sphere(Point3 center, double radius, Material mat)
     {
         Center = center;
         Radius = double.Max(0.0, radius);
+        Mat = mat;
     }
 
     public override bool Hit(Ray r, Interval rayT, ref HitRecord rec)
@@ -39,6 +41,7 @@ public class Sphere : Hittable
         rec.P = r.At(rec.T);
         Vec3 outwardNormal = (rec.P - Center) / Radius;
         rec.SetFaceNormal(r, outwardNormal);
+        rec.Mat = Mat;
 
         return true;
     }
