@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace raytracer;
 
 public class Camera
@@ -7,6 +5,7 @@ public class Camera
     public double AspectRatio = 1.0;
     public int ImageWidth = 100;
     public int SamplesPerPixel = 10;
+    public int MaxDepth = 10;
 
     public void Render(Hittable world)
     {
@@ -24,7 +23,7 @@ public class Camera
                 for(int sample = 0; sample < SamplesPerPixel; sample++)
                 {
                     Ray r = GetRay(i, j);
-                    pixelColor += RayColor(r, world);
+                    pixelColor += RayColor(r, MaxDepth, world);
                 }
 
                 Extensions.WriteColor(pixelColor * PixelSamplesScale);
@@ -82,12 +81,16 @@ public class Camera
         return new Ray(rayOrigin, rayDirection);
     }
 
-    private Color RayColor(Ray r, Hittable world)
+    private Color RayColor(Ray r, int depth, Hittable world)
     {
+        if(depth <= 0) {
+            return new Color(0, 0, 0);
+        }
         HitRecord rec = new HitRecord();
-        if(world.Hit(r, new Interval(0, double.PositiveInfinity), ref rec))
+        if(world.Hit(r, new Interval(0.001, double.PositiveInfinity), ref rec))
         {
-            return 0.5 * (rec.Normal + new Color(1.0, 1.0, 1.0));
+            Vec3 direction = rec.Normal + Vec3.RandomUnitVector();
+            return 0.1 * RayColor(new Ray(rec.P, direction), depth - 1, world);
         }
         
         Vec3 unitDirection = Vec3.UnitVector(r.Direction);

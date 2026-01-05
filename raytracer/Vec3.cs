@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace raytracer;
 
 public struct Vec3
@@ -23,6 +25,16 @@ public struct Vec3
     public readonly double Lenght()
     {
         return Math.Sqrt(LenghtSquared());
+    }
+    
+    public static Vec3 Random()
+    {
+        return new Vec3(Extensions.RandomDouble(), Extensions.RandomDouble(), Extensions.RandomDouble());
+    }
+
+    public static Vec3 Random(double min, double max)
+    {
+        return new Vec3(Extensions.RandomDouble(min, max), Extensions.RandomDouble(min, max), Extensions.RandomDouble(min, max));
     }
 
     public static Vec3 operator +(Vec3 u, Vec3 v)
@@ -73,6 +85,32 @@ public struct Vec3
     public static Vec3 UnitVector(Vec3 v)
     {
         return v / v.Lenght();
+    }
+
+    public static Vec3 RandomUnitVector()
+    {
+        while(true)
+        {
+            var p = Random(-1, 1);
+            var lensq = p.LenghtSquared();
+            if(1e-160 < lensq && lensq <= 1)
+            {
+                return p / Math.Sqrt(lensq);
+            }
+        }   
+    }
+
+    public static Vec3 RandomOnHemisphere(Vec3 normal)
+    {
+        Vec3 onUnitSphere = RandomUnitVector();
+        if(Dot(onUnitSphere, normal) > 0.0)
+        {
+            return onUnitSphere;
+        } 
+        else
+        {
+            return -onUnitSphere;
+        }
     }
 
     public override string ToString()
