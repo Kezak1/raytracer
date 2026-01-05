@@ -1,7 +1,7 @@
 # raytracer
 basic raytracer in C#, built while following the book
 [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
-It renders scenes to a plain-text PPM (P3) image written to stdout.
+It renders scenes to a plain text PPM (P3) image written to stdout.
 ## Setup
 1. Have .NET 9 SDK (`net9.0`)
 2. Clone this repo:
@@ -11,7 +11,7 @@ It renders scenes to a plain-text PPM (P3) image written to stdout.
     ```
 3. To run the program, you can either:
 
-    From the repo root:
+    from the repo root:
     ```
     dotnet run --project raytracer > image.ppm
     ```
@@ -25,7 +25,7 @@ It renders scenes to a plain-text PPM (P3) image written to stdout.
     It writes progress logs to stderr and the final image to stdout
 
 ## Examples
-After running the unchanged program you should get randomized sphere field”:
+After running the unchanged program you should something similar to this:
 ![alt text](assets/scene.png)
  
 ## Customization
