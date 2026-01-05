@@ -64,7 +64,7 @@ public class Metal : Material
 }
 
 public class Dielectric : Material {
-    private double RefractionIndex;
+    private readonly double RefractionIndex;
 
     public Dielectric(double index)
     {

@@ -15,28 +15,28 @@ public struct Interval
         Max = max;
     }
 
-    public double Size()
+    public readonly double Size()
     {
         return Max - Min;
     }
 
-    public bool Contains(double x)
+    public readonly bool Contains(double x)
     {
         return x >= Min && x <= Max;
     }
 
-    public bool Surrounds(double x)
+    public readonly bool Surrounds(double x)
     {
         return Min < x && x < Max;
     }
 
-    public double Clamp(double x)
+    public readonly double Clamp(double x)
     {
         if(x < Min) return Min;
         if(x > Max) return Max;
         return x;
     }
 
-    public static readonly Interval Empty = new Interval();
-    public static readonly Interval Universe = new Interval(double.NegativeInfinity, double.PositiveInfinity);
+    public static readonly Interval Empty = new();
+    public static readonly Interval Universe = new(double.NegativeInfinity, double.PositiveInfinity);
 }

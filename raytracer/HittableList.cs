@@ -25,7 +25,7 @@ public class HittableList : Hittable
     
     public override bool Hit(Ray r, Interval rayT, ref HitRecord rec)
     {
-        HitRecord tmpRec = new HitRecord();
+        HitRecord tmpRec = new();
         bool hitAny = false;
         var closetsSoFar = rayT.Max;
 
