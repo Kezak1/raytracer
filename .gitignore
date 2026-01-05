@@ -3,3 +3,4 @@ bin/
 obj/
 scene.ppm
 image*
+scene*.ppm

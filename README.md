@@ -1,7 +1,6 @@
 # raytracer
-basic raytracer in C#, built while following the book
-[Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
-It renders scenes to a plain text PPM (P3) image written to stdout.
+basic raytracer in C#, built while following the book [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) and the 4th chapter of [_Ray Tracing: The Next Week_](https://raytracing.github.io/books/RayTracingTheNextWeek.html).
+It renders scenes to a plain-text PPM (P3) image written to stdout.
 ## Setup
 1. Have .NET 9 SDK (`net9.0`)
 2. Clone this repo:
@@ -32,7 +31,7 @@ After running the unchanged program you should something similar to this:
 To customize the image you can edit the function `CreateFinalScene()` in Program.cs. You can add objects/materials and tweak camera settings like `ImageWidth`, `SamplesPerPixel`, `MaxDepth`, `VFov`, `DefocusAngle`, `FocusDist`, `LookFrom`, and `LookAt`.
 
 ## View the output
-To convert to PNG you can use ImageMagick:
+To convert to PNG with you can use ImageMagick:
 ```
 magick image.ppm image.png
 ```
