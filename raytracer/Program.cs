@@ -1,6 +1,5 @@
 ﻿global using Point3 = raytracer.Vec3;
 global using Color = raytracer.Vec3;
-using Microsoft.VisualBasic;
 
 namespace raytracer;
 
@@ -35,6 +34,7 @@ class Program
         Camera cam = new();
         cam.AspectRatio = 16.0 / 9.0;
         cam.ImageWidth = 400;
+        cam.SamplesPerPixel = 100;
 
         cam.Render(world);
     }

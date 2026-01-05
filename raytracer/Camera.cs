@@ -6,6 +6,8 @@ public class Camera
 {
     public double AspectRatio = 1.0;
     public int ImageWidth = 100;
+    public int SamplesPerPixel = 10;
+
     public void Render(Hittable world)
     {
         Initialize();
@@ -14,20 +16,25 @@ public class Camera
         {
             Console.Error.Write($"\rScanlines remaining: {ImageHeight - j} \n");
             Console.Error.Flush();
+
+            
             for (int i = 0; i < ImageWidth; i++)
             {
-                var pixelCenter = Pixel100Loc + (i * PixelDeltaU) + (j * PixelDeltaV);
-                var rayDirection = pixelCenter - Center;
-                Ray r = new Ray(Center, rayDirection);
+                Color pixelColor = new(0, 0, 0);
+                for(int sample = 0; sample < SamplesPerPixel; sample++)
+                {
+                    Ray r = GetRay(i, j);
+                    pixelColor += RayColor(r, world);
+                }
 
-                var pixelColor = RayColor(r, world);
-                Extensions.WriteColor(pixelColor);
+                Extensions.WriteColor(pixelColor * PixelSamplesScale);
             }
         }
         Console.WriteLine("Done!");
     }
     
     private int ImageHeight;
+    private double PixelSamplesScale;
     private Point3 Center;
     private Point3 Pixel100Loc;
     private Vec3 PixelDeltaU;
@@ -40,6 +47,8 @@ public class Camera
         {
             ImageHeight = 1;
         }
+
+        PixelSamplesScale = 1.0 / SamplesPerPixel;
 
         Center = new Point3(0, 0, 0);
         var focalLenght = 1.0;
@@ -57,7 +66,23 @@ public class Camera
         Pixel100Loc = viewportUpperLeft + (0.5 * (PixelDeltaU + PixelDeltaV));
     }
 
-    Color RayColor(Ray r, Hittable world)
+    private Vec3 SampleSquare()
+    {
+        return new Vec3(Extensions.RandomDouble() - 0.5, Extensions.RandomDouble() - 0.5, 0);
+    }
+
+    private Ray GetRay(int i, int j)
+    {
+        var offset = SampleSquare();
+        var pixelSmaple = Pixel100Loc + ((i + offset.X) * PixelDeltaU) + ((j + offset.Y) * PixelDeltaV);
+
+        var rayOrigin = Center;
+        var rayDirection = pixelSmaple - rayOrigin;
+
+        return new Ray(rayOrigin, rayDirection);
+    }
+
+    private Color RayColor(Ray r, Hittable world)
     {
         HitRecord rec = new HitRecord();
         if(world.Hit(r, new Interval(0, double.PositiveInfinity), ref rec))

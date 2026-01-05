@@ -30,6 +30,13 @@ public struct Interval
         return Min < x && x < Max;
     }
 
+    public double Clamp(double x)
+    {
+        if(x < Min) return Min;
+        if(x > Max) return Max;
+        return x;
+    }
+
     public static readonly Interval Empty = new Interval();
     public static readonly Interval Universe = new Interval(double.NegativeInfinity, double.PositiveInfinity);
 }
