@@ -48,10 +48,12 @@ class Program
             ImageWidth = 400,
             SamplesPerPixel = 100,
             MaxDepth = 50,
-            VFov = 90,
+            VFov = 20,
             LookFrom = new Point3(-2, 2, 1),
             LookAt = new Point3(0, 0, -1),
-            VUp = new Vec3(0, 1, 0)
+            VUp = new Vec3(0, 1, 0),
+            DefocusAngle = 10.0,
+            FocusDist = 3.4
         };
 
         cam.Render(world);

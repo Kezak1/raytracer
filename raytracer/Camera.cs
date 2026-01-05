@@ -10,6 +10,8 @@ public class Camera
     public Point3 LookFrom = new(0, 0, 0);
     public Point3 LookAt = new(0, 0, -1);
     public Vec3 VUp = new(0, 1, 0);
+    public double DefocusAngle = 0;
+    public double FocusDist = 10;
 
     public void Render(Hittable world)
     {
@@ -43,6 +45,8 @@ public class Camera
     private Vec3 PixelDeltaU;
     private Vec3 PixelDeltaV;
     private Vec3 U, V, W;
+    private Vec3 DefocusDiskU;
+    private Vec3 DefocusDiskV;
 
     private void Initialize()
     {
@@ -55,16 +59,14 @@ public class Camera
         PixelSamplesScale = 1.0 / SamplesPerPixel;
 
         Center = LookFrom;
-        var focalLenght = (LookFrom - LookAt).Lenght();
         var theta = Extensions.DegreesToRadians(VFov);
         var h = Math.Tan(theta / 2);
-        var viewportHeight = 2 * h * focalLenght;
-        var viewportWidth = viewportHeight * ((double)(ImageWidth) / ImageHeight);
+        var viewportHeight = 2 * h * FocusDist;
+        var viewportWidth = viewportHeight * ((double)ImageWidth / ImageHeight);
 
         W = Vec3.UnitVector(LookFrom - LookAt);
         U = Vec3.UnitVector(Vec3.Cross(VUp, W));
         V = Vec3.Cross(W, U);
-
 
         var viewportU = viewportWidth * U;
         var viewportV = viewportHeight * -V;
@@ -72,8 +74,12 @@ public class Camera
         PixelDeltaU = viewportU / ImageWidth;
         PixelDeltaV = viewportV / ImageHeight;
 
-        var viewportUpperLeft = Center - (focalLenght * W) - viewportU / 2 - viewportV / 2;
+        var viewportUpperLeft = Center - (FocusDist * W) - viewportU / 2 - viewportV / 2;
         Pixel100Loc = viewportUpperLeft + (0.5 * (PixelDeltaU + PixelDeltaV));
+
+        var defocusRadius = FocusDist * Math.Tan(Extensions.DegreesToRadians(DefocusAngle / 2));
+        DefocusDiskU = U * defocusRadius;
+        DefocusDiskV = V * defocusRadius;
     }
 
     private Vec3 SampleSquare()
@@ -81,12 +87,18 @@ public class Camera
         return new Vec3(Extensions.RandomDouble() - 0.5, Extensions.RandomDouble() - 0.5, 0);
     }
 
+    private Point3 DefocusSamepleDisk()
+    {
+        var p = Vec3.RandomInUnitDisk();
+        return Center + (p.X * DefocusDiskU) + (p.Y * DefocusDiskV);
+    }
+
     private Ray GetRay(int i, int j)
     {
         var offset = SampleSquare();
         var pixelSmaple = Pixel100Loc + ((i + offset.X) * PixelDeltaU) + ((j + offset.Y) * PixelDeltaV);
 
-        var rayOrigin = Center;
+        var rayOrigin = (DefocusAngle <= 0) ? Center : DefocusSamepleDisk();
         var rayDirection = pixelSmaple - rayOrigin;
 
         return new Ray(rayOrigin, rayDirection);

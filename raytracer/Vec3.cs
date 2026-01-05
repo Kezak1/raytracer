@@ -94,6 +94,18 @@ public struct Vec3
         return v / v.Lenght();
     }
 
+    public static Vec3 RandomInUnitDisk()
+    {
+        while(true)
+        {
+            var p = new Vec3(Extensions.RandomDouble(-1, 1), Extensions.RandomDouble(-1, 1), 0);
+            if(p.LenghtSquared() < 1)
+            {
+                return p;
+            }
+        }
+    }
+
     public static Vec3 RandomUnitVector()
     {
         while(true)
