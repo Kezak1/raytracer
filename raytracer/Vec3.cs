@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.VisualBasic;
 
 namespace raytracer;
 
@@ -85,7 +86,7 @@ public struct Vec3
 
     public static Vec3 Cross(Vec3 u, Vec3 v)
     {
-        return new Vec3(u.Y * v.Z - u.Z * v.Y, u.Z * v.X - u.X * v.Y, u.X * v.Y - u.Y * v.X);
+        return new Vec3(u.Y * v.Z - u.Z * v.Y, u.Z * v.X - u.X * v.Z, u.X * v.Y - u.Y * v.X);
     }
 
     public static Vec3 UnitVector(Vec3 v)
@@ -122,6 +123,15 @@ public struct Vec3
     public static Vec3 Reflect(Vec3 v, Vec3 n)
     {
         return v - 2 * Dot(v, n) * n;
+    }
+
+    public static Vec3 Reflect(Vec3 uv, Vec3 n, double etaiOverEtat)
+    {
+        var cosTheta = double.Min(Dot(-uv, n), 1.0);
+        Vec3 rOutPerp = etaiOverEtat * (uv + cosTheta * n);
+        Vec3 rOutParallel = -Math.Sqrt(double.Abs(1.0 - rOutPerp.LenghtSquared())) * n;
+
+        return rOutPerp + rOutParallel;
     }
 
     public readonly override string ToString()

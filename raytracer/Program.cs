@@ -26,18 +26,20 @@ class Program
         Console.WriteLine("Done!");
     }
 
-    static void CreateScene()
+    static void CreateScene1()
     {
         HittableList world = new();
 
         var materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
         var materialCenter = new Lambertian(new Color(0.1, 0.2, 0.5));
-        var materialLeft = new Metal(new Color(0.8, 0.8, 0.8), 0.3);
+        var materialLeft = new Dielectric(1.50);
+        var materialBubble = new Dielectric(1.00 / 1.50);
         var materialRight = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
         
         world.Add(new Sphere(new Point3(0.0, -100.5, -1.0), 100, materialGround));
         world.Add(new Sphere(new Point3(0.0, 0.0, -1.2), 0.5, materialCenter));
         world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.5, materialLeft));
+        world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.4, materialBubble));
         world.Add(new Sphere(new Point3(1.0, 0.0, -1.0), 0.5, materialRight));
 
         Camera cam = new()
@@ -45,7 +47,35 @@ class Program
             AspectRatio = 16.0 / 9.0,
             ImageWidth = 400,
             SamplesPerPixel = 100,
-            MaxDepth = 50
+            MaxDepth = 50,
+            VFov = 90,
+            LookFrom = new Point3(-2, 2, 1),
+            LookAt = new Point3(0, 0, -1),
+            VUp = new Vec3(0, 1, 0)
+        };
+
+        cam.Render(world);
+    }
+
+    static void CreateScene2()
+    {
+        HittableList world = new();
+
+        var R = Math.Cos(Math.PI/4);
+        
+        var materialLeft = new Lambertian(new Color(0, 0, 1));
+        var materialRight = new Lambertian(new Color(1, 0, 0));
+
+        world.Add(new Sphere(new Point3(-R, 0, -1), R, materialLeft));
+        world.Add(new Sphere(new Point3(R, 0, -1), R, materialRight));
+
+        Camera cam = new()
+        {
+            AspectRatio = 16.0 / 9.0,
+            ImageWidth = 400,
+            SamplesPerPixel = 100,
+            MaxDepth = 50,
+            VFov = 90
         };
 
         cam.Render(world);
@@ -55,6 +85,6 @@ class Program
     {
         // Console.WriteLine("Hello World!");
         // CreateImage();
-        CreateScene();
+        CreateScene1();
     } 
 }

@@ -62,3 +62,43 @@ public class Metal : Material
         return Vec3.Dot(scattered.Direction, rec.Normal) > 0;
     }
 }
+
+public class Dielectric : Material {
+    private double RefractionIndex;
+
+    public Dielectric(double index)
+    {
+        RefractionIndex = index;   
+    }
+
+    public override bool Scatter(Ray rIn, HitRecord rec, out Color attenuation, out Ray scattered)
+    {
+        attenuation = new Color(1.0, 1.0, 1.0);
+        double ri = rec.FrontFace ? (1.0 / RefractionIndex) : RefractionIndex;
+        
+        Vec3 unitDirection = Vec3.UnitVector(rIn.Direction);
+        double cosTheta = double.Min(Vec3.Dot(-unitDirection, rec.Normal), 1.0);
+        double sinTheta = Math.Sqrt(1.0 - cosTheta * cosTheta);
+
+        bool cannotRefract = ri * sinTheta > 1.0;
+        Vec3 direction;
+        
+        if(cannotRefract || Reflectance(cosTheta, ri) > Extensions.RandomDouble())
+        {
+            direction = Vec3.Reflect(unitDirection, rec.Normal);
+        } 
+        else
+        {
+            direction = Vec3.Reflect(unitDirection, rec.Normal, ri);
+        }
+        scattered = new Ray(rec.P, direction);
+        return true;
+    }
+
+    private static double Reflectance(double cosine, double reflectedIndex)
+    {
+        var r0 = (1 - reflectedIndex) / (1 + reflectedIndex);
+        r0 *= r0;
+        return r0 + (1-r0) * Math.Pow(1 - cosine, 5);
+    }
+}

@@ -6,6 +6,10 @@ public class Camera
     public int ImageWidth = 100;
     public int SamplesPerPixel = 10;
     public int MaxDepth = 10;
+    public double VFov = 90;
+    public Point3 LookFrom = new(0, 0, 0);
+    public Point3 LookAt = new(0, 0, -1);
+    public Vec3 VUp = new(0, 1, 0);
 
     public void Render(Hittable world)
     {
@@ -38,6 +42,7 @@ public class Camera
     private Point3 Pixel100Loc;
     private Vec3 PixelDeltaU;
     private Vec3 PixelDeltaV;
+    private Vec3 U, V, W;
 
     private void Initialize()
     {
@@ -49,19 +54,25 @@ public class Camera
 
         PixelSamplesScale = 1.0 / SamplesPerPixel;
 
-        Center = new Point3(0, 0, 0);
-        var focalLenght = 1.0;
-        var viewportHeight = 2.0;
+        Center = LookFrom;
+        var focalLenght = (LookFrom - LookAt).Lenght();
+        var theta = Extensions.DegreesToRadians(VFov);
+        var h = Math.Tan(theta / 2);
+        var viewportHeight = 2 * h * focalLenght;
         var viewportWidth = viewportHeight * ((double)(ImageWidth) / ImageHeight);
 
-        var viewportU = new Vec3(viewportWidth, 0, 0);
-        var viewportV = new Vec3(0, -viewportHeight, 0);
+        W = Vec3.UnitVector(LookFrom - LookAt);
+        U = Vec3.UnitVector(Vec3.Cross(VUp, W));
+        V = Vec3.Cross(W, U);
+
+
+        var viewportU = viewportWidth * U;
+        var viewportV = viewportHeight * -V;
 
         PixelDeltaU = viewportU / ImageWidth;
         PixelDeltaV = viewportV / ImageHeight;
 
-        var viewportUpperLeft = Center - new Vec3(0, 0, focalLenght) - (viewportU / 2) - (viewportV / 2);
-
+        var viewportUpperLeft = Center - (focalLenght * W) - viewportU / 2 - viewportV / 2;
         Pixel100Loc = viewportUpperLeft + (0.5 * (PixelDeltaU + PixelDeltaV));
     }
 
