@@ -1,6 +1,3 @@
-using System.Text;
-using Microsoft.VisualBasic;
-
 namespace raytracer;
 
 public struct Vec3
@@ -18,14 +15,50 @@ public struct Vec3
         Z = z;
     }
 
-    public readonly double LenghtSquared()
+    public double this[int idx]
+    {
+        get
+        {
+            switch (idx)
+            {
+                case 0: 
+                    return X;
+                case 1: 
+                    return Y;
+                case 2: 
+                    return Z;
+                default: 
+                    throw new IndexOutOfRangeException();
+            }
+        }
+
+        set
+        {
+            switch (idx)
+            {
+                case 0: 
+                    X = value; 
+                    break;
+                case 1: 
+                    Y = value; 
+                    break;
+                case 2: 
+                    Z = value; 
+                    break;
+                default: 
+                    throw new IndexOutOfRangeException();
+            }
+        }
+    }
+
+    public readonly double LengthSquared()
     {
         return X*X + Y*Y + Z*Z;
     }
 
-    public readonly double Lenght()
+    public readonly double Length()
     {
-        return Math.Sqrt(LenghtSquared());
+        return Math.Sqrt(LengthSquared());
     }
 
     public readonly bool NearZero()
@@ -91,7 +124,7 @@ public struct Vec3
 
     public static Vec3 UnitVector(Vec3 v)
     {
-        return v / v.Lenght();
+        return v / v.Length();
     }
 
     public static Vec3 RandomInUnitDisk()
@@ -99,7 +132,7 @@ public struct Vec3
         while(true)
         {
             var p = new Vec3(Extensions.RandomDouble(-1, 1), Extensions.RandomDouble(-1, 1), 0);
-            if(p.LenghtSquared() < 1)
+            if(p.LengthSquared() < 1)
             {
                 return p;
             }
@@ -111,7 +144,7 @@ public struct Vec3
         while(true)
         {
             var p = Random(-1, 1);
-            var lensq = p.LenghtSquared();
+            var lensq = p.LengthSquared();
             if(1e-160 < lensq && lensq <= 1)
             {
                 return p / Math.Sqrt(lensq);
@@ -137,11 +170,11 @@ public struct Vec3
         return v - 2 * Dot(v, n) * n;
     }
 
-    public static Vec3 Reflect(Vec3 uv, Vec3 n, double etaiOverEtat)
+    public static Vec3 Refract(Vec3 uv, Vec3 n, double etaiOverEtat)
     {
         var cosTheta = double.Min(Dot(-uv, n), 1.0);
         Vec3 rOutPerp = etaiOverEtat * (uv + cosTheta * n);
-        Vec3 rOutParallel = -Math.Sqrt(double.Abs(1.0 - rOutPerp.LenghtSquared())) * n;
+        Vec3 rOutParallel = -Math.Sqrt(double.Abs(1.0 - rOutPerp.LengthSquared())) * n;
 
         return rOutPerp + rOutParallel;
     }

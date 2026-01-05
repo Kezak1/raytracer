@@ -1,6 +1,5 @@
 ﻿global using Point3 = raytracer.Vec3;
 global using Color = raytracer.Vec3;
-using System.Net.Http.Headers;
 
 namespace raytracer;
 
@@ -23,64 +22,7 @@ class Program
                 Extensions.WriteColor(pixelColor);
             }
         }
-        Console.WriteLine("Done!");
-    }
-
-    static void CreateScene1()
-    {
-        HittableList world = new();
-
-        var materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
-        var materialCenter = new Lambertian(new Color(0.1, 0.2, 0.5));
-        var materialLeft = new Dielectric(1.50);
-        var materialBubble = new Dielectric(1.00 / 1.50);
-        var materialRight = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
-        
-        world.Add(new Sphere(new Point3(0.0, -100.5, -1.0), 100, materialGround));
-        world.Add(new Sphere(new Point3(0.0, 0.0, -1.2), 0.5, materialCenter));
-        world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.5, materialLeft));
-        world.Add(new Sphere(new Point3(-1.0, 0.0, -1.0), 0.4, materialBubble));
-        world.Add(new Sphere(new Point3(1.0, 0.0, -1.0), 0.5, materialRight));
-
-        Camera cam = new()
-        {
-            AspectRatio = 16.0 / 9.0,
-            ImageWidth = 400,
-            SamplesPerPixel = 100,
-            MaxDepth = 50,
-            VFov = 20,
-            LookFrom = new Point3(-2, 2, 1),
-            LookAt = new Point3(0, 0, -1),
-            VUp = new Vec3(0, 1, 0),
-            DefocusAngle = 10.0,
-            FocusDist = 3.4
-        };
-
-        cam.Render(world);
-    }
-
-    static void CreateScene2()
-    {
-        HittableList world = new();
-
-        var R = Math.Cos(Math.PI/4);
-        
-        var materialLeft = new Lambertian(new Color(0, 0, 1));
-        var materialRight = new Lambertian(new Color(1, 0, 0));
-
-        world.Add(new Sphere(new Point3(-R, 0, -1), R, materialLeft));
-        world.Add(new Sphere(new Point3(R, 0, -1), R, materialRight));
-
-        Camera cam = new()
-        {
-            AspectRatio = 16.0 / 9.0,
-            ImageWidth = 400,
-            SamplesPerPixel = 100,
-            MaxDepth = 50,
-            VFov = 90
-        };
-
-        cam.Render(world);
+        Console.Error.WriteLine("Done!");
     }
 
     static void CreateFinalScene()
@@ -97,7 +39,7 @@ class Program
                 var chooseMat = Extensions.RandomDouble();
                 Point3 center = new(a + 0.9 * Extensions.RandomDouble(), 0.2, b + 0.9 * Extensions.RandomDouble());
 
-                if((center - new Point3(4, 0.2, 0)).Lenght() > 0.9)
+                if((center - new Point3(4, 0.2, 0)).Length() > 0.9)
                 {
                     Material sphereMaterial;
 
@@ -132,11 +74,12 @@ class Program
         var material3 = new Metal(new Color(0.7, 0.6, 0.5), 0.0);
         world.Add(new Sphere(new Point3(4, 1, 0), 1.0, material3));
 
+        BVHNode bvhWorld = new(world.Objects, 0, world.Objects.Count);
         Camera cam = new()
         {
             AspectRatio = 16.0 / 9.0,
-            ImageWidth = 1200,
-            SamplesPerPixel = 50,
+            ImageWidth = 1920,
+            SamplesPerPixel = 500,
             MaxDepth = 50,
             VFov = 20,
             LookFrom = new Point3(13, 2, 3),
@@ -146,7 +89,7 @@ class Program
             FocusDist = 10.0
         };
 
-        cam.Render(world);
+        cam.Render(bvhWorld);
     }
 
     static void Main()

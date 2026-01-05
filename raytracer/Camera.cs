@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Reflection;
+
 namespace raytracer;
 
 public class Camera
@@ -15,14 +18,15 @@ public class Camera
 
     public void Render(Hittable world)
     {
+        var sw = Stopwatch.StartNew();
+        
         Initialize();
         Console.Write($"P3\n{ImageWidth} {ImageHeight}\n255\n");
-        for (int j = 0; j < ImageHeight; j++)
-        {
-            Console.Error.Write($"\rScanlines remaining: {ImageHeight - j} \n");
-            Console.Error.Flush();
 
-            
+        var pixels = new Color[ImageHeight, ImageWidth];
+        int count = 0;
+        Parallel.For(0, ImageHeight, j =>
+        {
             for (int i = 0; i < ImageWidth; i++)
             {
                 Color pixelColor = new(0, 0, 0);
@@ -32,10 +36,36 @@ public class Camera
                     pixelColor += RayColor(r, MaxDepth, world);
                 }
 
-                Extensions.WriteColor(pixelColor * PixelSamplesScale);
+                pixels[j, i] = pixelColor * PixelSamplesScale;
+            }
+
+            int current = Interlocked.Increment(ref count);
+            DrawProgressBar(count, ImageHeight);
+        });
+
+        for(int j = 0; j < ImageHeight; j++)
+        {
+            for(int i = 0; i < ImageWidth; i++)
+            {
+                Extensions.WriteColor(pixels[j, i]);
             }
         }
-        Console.WriteLine("Done!");
+
+        sw.Stop();
+        Console.Error.WriteLine($"\nRender time: {sw.Elapsed}");
+    }
+
+    private static void DrawProgressBar(int completed, int total)
+    {
+        int barWidth = 50;
+        double progress = (double)completed / total;
+        int percentages = (int)double.Floor(progress * 100);
+        int filledWidth = (int)(barWidth * progress);
+        
+        Console.Error.Write("\r[");
+        Console.Error.Write(new string('#', filledWidth));
+        Console.Error.Write(new string(' ', barWidth - filledWidth));
+        Console.Error.Write($"] {completed}/{total} ({percentages}%)");
     }
     
     private int ImageHeight;

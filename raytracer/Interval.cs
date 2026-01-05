@@ -15,6 +15,12 @@ public struct Interval
         Max = max;
     }
 
+    public Interval(Interval a, Interval b)
+    {
+        Min = a.Min <= b.Min ? a.Min : b.Min;
+        Max = a.Max >= b.Max ? a.Max : b.Max;
+    }
+
     public readonly double Size()
     {
         return Max - Min;
@@ -35,6 +41,12 @@ public struct Interval
         if(x < Min) return Min;
         if(x > Max) return Max;
         return x;
+    }
+
+    public readonly Interval Expand(double delta)
+    {   
+        var padding = delta / 2;
+        return new Interval(Min - padding, Max + padding);
     }
 
     public static readonly Interval Empty = new();

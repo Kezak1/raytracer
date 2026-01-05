@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace raytracer;
 
 public static class Extensions {
@@ -25,13 +27,21 @@ public static class Extensions {
         return degrees * Math.PI / 180.0;
     }
 
-    private static readonly Random random = new();
+    [ThreadStatic]
+    private static Random? Random;
     public static double RandomDouble()
     {
-        return random.NextDouble();
+        Random ??= new Random();
+        return Random.NextDouble();
     }
     public static double RandomDouble(double min, double max)
     {
         return min + (max - min) * RandomDouble();
+    }
+
+    public static int RandomInt(int min, int max)
+    {
+        Random ??= new Random();
+        return Random.Next(min, max + 1);
     }
 }

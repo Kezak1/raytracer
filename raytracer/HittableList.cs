@@ -2,16 +2,19 @@ namespace raytracer;
 
 public class HittableList : Hittable
 {
+    private AABB Bbox;
     public List<Hittable> Objects;
     public HittableList()
     {
-        Objects = new List<Hittable>();
+        Objects = [];
+        Bbox = new();
     }
     
     public HittableList(Hittable obj)
     {
-        Objects = new List<Hittable>();
+        Objects = [];
         Add(obj);
+        Bbox = new();
     }
     public void Clear()
     {
@@ -21,6 +24,7 @@ public class HittableList : Hittable
     public void Add(Hittable obj)
     {
         Objects.Add(obj);
+        Bbox = new AABB(Bbox, obj.BoundingBox());
     }
     
     public override bool Hit(Ray r, Interval rayT, ref HitRecord rec)
@@ -39,5 +43,10 @@ public class HittableList : Hittable
         }
 
         return hitAny;
+    }
+
+    public override AABB BoundingBox()
+    {
+        return Bbox;
     }
 }

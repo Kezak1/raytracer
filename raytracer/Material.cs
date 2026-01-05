@@ -89,7 +89,7 @@ public class Dielectric : Material {
         } 
         else
         {
-            direction = Vec3.Reflect(unitDirection, rec.Normal, ri);
+            direction = Vec3.Refract(unitDirection, rec.Normal, ri);
         }
         scattered = new Ray(rec.P, direction);
         return true;

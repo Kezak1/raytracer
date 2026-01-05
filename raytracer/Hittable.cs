@@ -24,4 +24,5 @@ public struct HitRecord
 public abstract class Hittable
 {
     public abstract bool Hit(Ray r, Interval rayT, ref HitRecord rec);
+    public abstract AABB BoundingBox();
 };
