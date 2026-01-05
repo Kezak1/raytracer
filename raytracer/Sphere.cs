@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace raytracer;
 
 public class Sphere : Hittable
@@ -13,7 +11,7 @@ public class Sphere : Hittable
         Radius = double.Max(0.0, radius);
     }
 
-    public override bool Hit(Ray r, double rayTMin, double rayTMax, ref HitRecord rec)
+    public override bool Hit(Ray r, Interval rayT, ref HitRecord rec)
     {
         Vec3 oc = Center - r.Origin;
         var a = r.Direction.LenghtSquared();
@@ -28,10 +26,10 @@ public class Sphere : Hittable
 
         var sqrtD = Math.Sqrt(delta);
         var root = (h - sqrtD) / a;
-        if(root <= rayTMin || rayTMax <= root)
+        if(root <= rayT.Min || rayT.Max <= root)
         {
             root = (h + sqrtD) / a;
-            if(root <= rayTMin || rayTMax <= root)
+            if(root <= rayT.Min|| rayT.Max <= root)
             {
                 return false;
             }

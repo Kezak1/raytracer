@@ -1,0 +1,73 @@
+using System.Runtime.CompilerServices;
+
+namespace raytracer;
+
+public class Camera
+{
+    public double AspectRatio = 1.0;
+    public int ImageWidth = 100;
+    public void Render(Hittable world)
+    {
+        Initialize();
+        Console.Write($"P3\n{ImageWidth} {ImageHeight}\n255\n");
+        for (int j = 0; j < ImageHeight; j++)
+        {
+            Console.Error.Write($"\rScanlines remaining: {ImageHeight - j} \n");
+            Console.Error.Flush();
+            for (int i = 0; i < ImageWidth; i++)
+            {
+                var pixelCenter = Pixel100Loc + (i * PixelDeltaU) + (j * PixelDeltaV);
+                var rayDirection = pixelCenter - Center;
+                Ray r = new Ray(Center, rayDirection);
+
+                var pixelColor = RayColor(r, world);
+                Extensions.WriteColor(pixelColor);
+            }
+        }
+        Console.WriteLine("Done!");
+    }
+    
+    private int ImageHeight;
+    private Point3 Center;
+    private Point3 Pixel100Loc;
+    private Vec3 PixelDeltaU;
+    private Vec3 PixelDeltaV;
+
+    private void Initialize()
+    {
+        ImageHeight = (int)(ImageWidth / AspectRatio);
+        if(ImageHeight < 1)
+        {
+            ImageHeight = 1;
+        }
+
+        Center = new Point3(0, 0, 0);
+        var focalLenght = 1.0;
+        var viewportHeight = 2.0;
+        var viewportWidth = viewportHeight * ((double)(ImageWidth) / ImageHeight);
+
+        var viewportU = new Vec3(viewportWidth, 0, 0);
+        var viewportV = new Vec3(0, -viewportHeight, 0);
+
+        PixelDeltaU = viewportU / ImageWidth;
+        PixelDeltaV = viewportV / ImageHeight;
+
+        var viewportUpperLeft = Center - new Vec3(0, 0, focalLenght) - (viewportU / 2) - (viewportV / 2);
+
+        Pixel100Loc = viewportUpperLeft + (0.5 * (PixelDeltaU + PixelDeltaV));
+    }
+
+    Color RayColor(Ray r, Hittable world)
+    {
+        HitRecord rec = new HitRecord();
+        if(world.Hit(r, new Interval(0, double.PositiveInfinity), ref rec))
+        {
+            return 0.5 * (rec.Normal + new Color(1.0, 1.0, 1.0));
+        }
+        
+        Vec3 unitDirection = Vec3.UnitVector(r.Direction);
+        var a = 0.5*(unitDirection.Y + 1.0);
+        return (1.0-a) * new Color(1.0, 1.0, 1.0) + a * new Color(0.5, 0.7, 1.0);
+    }
+
+}
