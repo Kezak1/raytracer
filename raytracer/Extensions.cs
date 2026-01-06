@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace raytracer;
 
 public static class Extensions {

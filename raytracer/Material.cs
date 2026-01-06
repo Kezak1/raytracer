@@ -1,5 +1,3 @@
-using System.Reflection.Emit;
-
 namespace raytracer;
 
 public abstract class Material
