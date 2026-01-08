@@ -1,5 +1,5 @@
 # raytracer
-Basic raytracer in C#, built while following the book [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html) and chapter 4  of [_Ray Tracing: The Next Week_](https://raytracing.github.io/books/RayTracingTheNextWeek.html).
+Basic raytracer in C#, built while following the book [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html) and implementing a BVH acceleration structure based on chapter 4 of [_Ray Tracing: The Next Week_](https://raytracing.github.io/books/RayTracingTheNextWeek.html).
 It renders scenes to a plain-text PPM (P3) image written to stdout.
 
 ## Setup
