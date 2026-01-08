@@ -1,6 +1,6 @@
 .idea/
 bin/
 obj/
-scene.ppm
 image*
 scene*.ppm
+!scene.ppm
