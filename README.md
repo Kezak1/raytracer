@@ -33,7 +33,7 @@ After running the unchanged program you should something similar to this:
 To customize the image you can edit the function `CreateFinalScene()` in `Program.cs`. You can add objects/materials and tweak camera settings like `ImageWidth`, `SamplesPerPixel`, `MaxDepth`, `VFov`, `DefocusAngle`, `FocusDist`, `LookFrom`, and `LookAt`.
 
 ## View the output
-To convert to PNG with you can use ImageMagick:
+To convert to PNG you can use ImageMagick:
 ```
 magick image.ppm image.png
 ```
